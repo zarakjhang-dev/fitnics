@@ -14,5 +14,5 @@
   ]
 
 [dev]
-  framework = "react"
+  framework = "create-react-app"
   command = "npm run dev"
