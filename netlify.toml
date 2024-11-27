@@ -1,0 +1,6 @@
+[build]
+  functions = "backend/functions"
+  publish = "frontend/build"
+
+[functions]
+  node_bundler = "esbuild"

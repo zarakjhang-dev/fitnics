@@ -3,3 +3,7 @@ node_modules
 .DS_Store
 backend/package-lock.json
 frontend/package-lock.json
+package-lock.json
+
+# Local Netlify folder
+.netlify
