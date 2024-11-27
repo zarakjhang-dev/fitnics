@@ -1,6 +1,18 @@
 [build]
   functions = "backend/functions"
   publish = "frontend/build"
+  base = "."  # Ensures Netlify uses the root directory as the base
 
 [functions]
-  node_bundler = "esbuild"
+  node_bundler = "esbuild" # Continue using esbuild for efficient bundling
+  external_node_modules = [
+    "express",
+    "cookie-parser",
+    "mongoose",
+    "jsonwebtoken",
+    "bcryptjs"
+  ]
+
+[dev]
+  framework = "react"
+  command = "npm run dev"

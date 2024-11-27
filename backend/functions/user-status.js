@@ -1,20 +1,25 @@
 import serverless from "serverless-http";
 import express from "express";
+import { protect } from "../middleware/authMiddleware.js";
 import connectDB from "../config/db.js";
-import { notFound, errorHandler } from "../middleware/errorMiddleware.js";
-import cookieParser from "cookie-parser";
-import userStatusRoutes from "../routes/userStatusRoutes.js";
+import {
+	createUserStatus,
+	getUserStatus,
+	updateUserStatus,
+} from "../controllers/userStatusController.js";
 
 const app = express();
 
+// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
 
+// Connect to database
 connectDB();
 
-app.use("/api/user", userStatusRoutes);
-app.use(notFound);
-app.use(errorHandler);
+// Routes
+app.post("/status", protect, createUserStatus);
+app.get("/status", protect, getUserStatus);
+app.put("/status", protect, updateUserStatus);
 
 export const handler = serverless(app);

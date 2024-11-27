@@ -1,20 +1,25 @@
 import serverless from "serverless-http";
 import express from "express";
+import { protect } from "../middleware/authMiddleware.js";
 import connectDB from "../config/db.js";
-import { notFound, errorHandler } from "../middleware/errorMiddleware.js";
-import cookieParser from "cookie-parser";
-import UserMealPlanRoutes from "../routes/UserMealPlanRoutes.js";
+import {
+	createUserMealPlan,
+	getUserMealPlan,
+	updateUserMealPlan,
+} from "../controllers/UserMealPlanController.js";
 
 const app = express();
 
+// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
 
+// Connect to database
 connectDB();
 
-app.use("/api/user", UserMealPlanRoutes);
-app.use(notFound);
-app.use(errorHandler);
+// Routes
+app.post("/meal-plan", protect, createUserMealPlan);
+app.put("/meal-plan", protect, updateUserMealPlan);
+app.get("/meal-plan/:date", protect, getUserMealPlan);
 
 export const handler = serverless(app);
