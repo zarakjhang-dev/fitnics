@@ -1,16 +1,21 @@
 import express from "express";
 const router = express.Router();
+
 import {
-  createUserStatus,
-  getUserStatus,
-  updateUserStatus,
+	createUserStatus,
+	getUserStatus,
+	updateUserStatus,
 } from "../controllers/userStatusController.js";
+
 import { protect } from "../middleware/authMiddleware.js";
 
-router
-  .route("/status")
-  .post(protect, createUserStatus)
-  .get(protect, getUserStatus)
-  .put(protect, updateUserStatus);
+// Route to create user status (protected)
+router.post("/status", protect, createUserStatus);
+
+// Route to get user status (protected)
+router.get("/status", protect, getUserStatus);
+
+// Route to update user status (protected)
+router.put("/status", protect, updateUserStatus);
 
 export default router;

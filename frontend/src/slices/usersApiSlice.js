@@ -1,9 +1,10 @@
+import { logout } from "./authSlice"; // <-- Import logout action here
 import { apiSlice } from "./apiSlice";
 
-const USERS_URL = "users";
-const USER_STATUS_URL = "user-status/status";
-const USER_MEAL_PLAN_URL = "user-meal-plan/meal-plan";
-const USER_WATER_INTAKE_URL = "users/water-intake";
+const USERS_URL = "/api/users";
+const USER_STATUS_URL = "/api/user/status";
+const USER_MEAL_PLAN_URL = "/api/user/meal-plan";
+const USER_WATER_INTAKE_URL = "/api/users/water-intake";
 
 export const userApiSlice = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
@@ -14,6 +15,18 @@ export const userApiSlice = apiSlice.injectEndpoints({
 				method: "POST",
 				body: data,
 			}),
+			// Handle response and store token in the auth state
+			onQueryStarted: async (arg, { dispatch, queryFulfilled }) => {
+				try {
+					const { data } = await queryFulfilled;
+					// Assuming the response contains user data along with token
+					if (data?.token) {
+						dispatch(setCredentials(data)); // Store token and user info
+					}
+				} catch (err) {
+					console.error("Login failed:", err);
+				}
+			},
 		}),
 		register: builder.mutation({
 			query: (data) => ({
@@ -23,10 +36,15 @@ export const userApiSlice = apiSlice.injectEndpoints({
 			}),
 		}),
 		logout: builder.mutation({
-			query: () => ({
+			query: (data) => ({
 				url: `${USERS_URL}/logout`,
 				method: "POST",
+				body: data,
 			}),
+			// Clear token on logout
+			onQueryStarted: (arg, { dispatch }) => {
+				dispatch(logout());
+			},
 		}),
 		updateUser: builder.mutation({
 			query: (data) => ({
@@ -35,7 +53,6 @@ export const userApiSlice = apiSlice.injectEndpoints({
 				body: data,
 			}),
 		}),
-
 		// User status endpoints
 		updateStatus: builder.mutation({
 			query: (data) => ({
@@ -69,6 +86,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
 				body: data,
 			}),
 		}),
+
 		updateWaterIntake: builder.mutation({
 			query: (data) => ({
 				url: `${USER_WATER_INTAKE_URL}`,

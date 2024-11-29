@@ -62,9 +62,10 @@ const registerUser = asyncHandler(async (req, res) => {
 // route        POST /api/users/logout
 // @access      Public
 const logoutUser = asyncHandler(async (req, res) => {
-	// Notify client to remove the token
-	res.status(200).json({ message: "User logged out successfully" });
+  // Notify client to remove the token
+  res.status(200).json({ message: "User logged out successfully" });
 });
+
 
 // @desc        Get user profile
 // route        GET /api/users/profile

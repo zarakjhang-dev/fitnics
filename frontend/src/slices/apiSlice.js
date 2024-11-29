@@ -1,22 +1,30 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { fetchBaseQuery, createApi } from "@reduxjs/toolkit/query/react";
 
-const BASE_URL =
-	process.env.NODE_ENV === "development"
-		? "http://localhost:8888/.netlify/functions"
-		: "/.netlify/functions";
+// Create a baseQuery function that adds the Authorization header
+const baseQuery = fetchBaseQuery({
+	baseUrl: "http://localhost:3000",
+	prepareHeaders: (headers, { getState }) => {
+		// Get the token from the Redux state or localStorage
+		const token =
+			getState().auth.userInfo?.token || localStorage.getItem("token");
 
-const apiSlice = createApi({
-	baseQuery: fetchBaseQuery({
-		baseUrl: BASE_URL,
-		prepareHeaders: (headers, { getState }) => {
-			const token = getState().auth.userInfo?.token; // Assuming token is part of userInfo
-			if (token) {
-				headers.set("Authorization", `Bearer ${token}`);
-			}
-			return headers;
-		},
-	}),
-	endpoints: () => ({}),
+		// If a token exists, add it to the Authorization header
+		if (token) {
+			headers.set("Authorization", `Bearer ${token}`);
+		}
+
+		return headers;
+	},
 });
 
-export { apiSlice };
+export const apiSlice = createApi({
+	baseQuery, // Define the baseQuery
+	tagTypes: ["User"], // Set tag types (if needed for invalidation)
+	endpoints: (builder) => ({
+		// Define your endpoints here (currently an empty object)
+	}),
+});
+
+// This line will export hooks for the defined endpoints
+// Since the endpoints object is currently empty, this will not export any hooks yet.
+export default apiSlice;

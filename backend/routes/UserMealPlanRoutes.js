@@ -1,17 +1,21 @@
 import express from "express";
 const router = express.Router();
+
 import {
-  createUserMealPlan,
-  getUserMealPlan,
-  updateUserMealPlan,
+	createUserMealPlan,
+	getUserMealPlan,
+	updateUserMealPlan,
 } from "../controllers/UserMealPlanController.js";
+
 import { protect } from "../middleware/authMiddleware.js";
 
-router
-  .route("/meal-plan")
-  .post(protect, createUserMealPlan)
-  .put(protect, updateUserMealPlan);
+// Route to create a user meal plan (protected)
+router.post("/meal-plan", protect, createUserMealPlan);
 
-router.route("/meal-plan/:date").get(protect, getUserMealPlan);
+// Route to update a user meal plan (protected)
+router.put("/meal-plan", protect, updateUserMealPlan);
+
+// Route to get a user meal plan for a specific date (protected)
+router.get("/meal-plan/:date", protect, getUserMealPlan);
 
 export default router;

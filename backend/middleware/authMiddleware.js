@@ -16,7 +16,7 @@ export const protect = async (req, res, next) => {
 			const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
 			// Fetch user and attach to request
-			req.user = await User.findById(decoded.id).select("-password");
+			req.user = await User.findById(decoded._id).select("-password");
 
 			next();
 		} catch (error) {

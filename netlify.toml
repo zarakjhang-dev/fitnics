@@ -1,17 +1,6 @@
 [build]
-  functions = "backend/functions"
-  publish = "frontend/build"
+  publish = "frontend/build"  # Ensures only the frontend build folder is published
   base = "."  # Ensures Netlify uses the root directory as the base
-
-[functions]
-  node_bundler = "esbuild" # Continue using esbuild for efficient bundling
-  external_node_modules = [
-    "express",
-    "cookie-parser",
-    "mongoose",
-    "jsonwebtoken",
-    "bcryptjs"
-  ]
 
 [dev]
   framework = "create-react-app"
