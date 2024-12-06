@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useLocation } from "react-router-dom";
 import { Box, Stack, Typography, Button } from '@mui/material';
 import HeroBannerImage from '../assets/images/banner.png';
+import Logo from '../assets/images/banner-logo.jpg'
 
 const HeroBanner = () => {
   return (
@@ -17,9 +18,16 @@ const HeroBanner = () => {
       p="20px"
     >
       <Box flex="1">
-        <Typography color="FF2625" fontWeight="600" fontSize={{ lg: '26px', xs: '22px' }}> {/* Adjust font size based on breakpoints */}
-          Fitnics
+        <Typography color="FF2625" fontWeight="600" fontSize={{ lg: '30px', xs: '22px' }}> {/* Adjust font size based on breakpoints */}
+          FITNICS
         </Typography>
+        <img
+						src={Logo}
+						alt="logo"
+						style={{
+							width: "100px",
+						}}
+					/>
         <Typography fontWeight={700} sx={{ fontSize: { lg: '44px', xs: '32px' } }}>
           We are here to help <br /> you to achieve your <br /> fitness dreams.
         </Typography>

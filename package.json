@@ -8,6 +8,7 @@
     "netlify-deploy": "netlify deploy --prod"
   },
   "dependencies": {
+    "react-toastify": "^10.0.6",
     "serverless-http": "^3.2.0"
   },
   "devDependencies": {

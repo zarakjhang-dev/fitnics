@@ -1,7 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Container, Navbar, Nav, NavDropdown } from "react-bootstrap";
+import { Container, Navbar, Nav, NavDropdown, Button } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useLogoutMutation } from "../slices/usersApiSlice";
@@ -9,7 +9,7 @@ import { logout } from "../slices/authSlice";
 import { toast } from "react-toastify";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
-// import Logo from "../assets/images/Logo.png";
+import Logo from "../assets/images/FITNICS-cropped.jpg"
 
 const Header = () => {
 	const { userInfo } = useSelector((state) => state.auth);
@@ -65,14 +65,13 @@ const Header = () => {
 				<Navbar.Brand
 					as={Link}
 					to="/">
-					LOGO
-					{/* <img
+					<img
 						src={Logo}
 						alt="logo"
 						style={{
 							width: "100px",
 						}}
-					/> */}
+					/>
 				</Navbar.Brand>
 				<Navbar.Toggle
 					aria-controls="responsive-navbar-nav"
@@ -81,18 +80,46 @@ const Header = () => {
 				</Navbar.Toggle>
 				<Navbar.Collapse id="responsive-navbar-nav">
 					<Nav className="me-auto">
-						<NavLink to="/">Home</NavLink>
-						<NavLink to="/pages/features">Features</NavLink>
-						<NavLink to="/pages/workouts">Workout Database</NavLink>
-						<NavLink to="/pages/workoutplans">Workout Plans</NavLink>
-						<NavLink to="/pages/nutrition-checker">Nutrition Checker</NavLink>
-						<NavLink to="/pages/bmr-calculator">BMR</NavLink>
-						<NavLink to="/pages/about">About</NavLink>
+						<NavLink to="/">
+							<Button variant="outline-success">
+								Home
+							</Button>
+						</NavLink>
+						<NavLink to="/pages/features">
+							<Button variant="outline-success">
+								Features
+							</Button>
+						</NavLink>
+						<NavLink to="/pages/workouts">
+							<Button variant="outline-success">
+								Workout Database
+							</Button>
+						</NavLink>
+						<NavLink to="/pages/workoutplans">
+							<Button variant="outline-success">
+								Workout Plans
+							</Button>
+						</NavLink>
+						<NavLink to="/pages/nutrition-checker">
+							<Button variant="outline-success">
+								Nutrition Checker
+							</Button>
+						</NavLink>
+						<NavLink to="/pages/bmr-calculator">
+							<Button variant="outline-success">
+								BMR
+							</Button>
+						</NavLink>
+						<NavLink to="/pages/about">
+							<Button variant="outline-success">
+								About
+							</Button>
+						</NavLink>
 					</Nav>
 					<Nav>
 						{userInfo ? (
 							<NavDropdown
-								title={userInfo.name}
+								title={<span style={{ color: '#4ded2d' }}>{userInfo.name}</span>}
 								id="username">
 								<NavDropdown.Item
 									as={Link}

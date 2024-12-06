@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Container, Row, Col, Form, Button, Table } from "react-bootstrap";
+import { ToastContainer, toast } from 'react-toastify';
 
 const NutritionCheckerForm = () => {
   const [foodItem, setFoodItem] = useState("");
@@ -24,7 +25,9 @@ const NutritionCheckerForm = () => {
       if (data.items.length > 0) {
         setNutritionResult(data.items[0]);
       } else {
-        alert("No nutrition information found for that food item");
+        // alert("No nutrition information found for that food item");
+        toast("No nutrition information found for that food item");
+
       }
     } catch (error) {
       console.error("Error fetching nutrition information:", error);
@@ -33,6 +36,7 @@ const NutritionCheckerForm = () => {
 
   return (
     <Container className="my-5">
+      <ToastContainer/>
       <Row className="justify-content-md-center">
         <Col md="auto">
         <h2>Nutrition Information Search</h2>
