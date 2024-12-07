@@ -33,7 +33,11 @@ const MealPlan = () => {
   useEffect(() => {
     const fetchMealPlan = async () => {
       try {
-        const response = await fetch(`/api/user/meal-plan/${currentDate}`);
+        const response = await fetch(`/api/user/meal-plan/${currentDate}`, 
+        {headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+          }}
+        );
         const data = await response.json();
 
         setMeal1(data.meal1);

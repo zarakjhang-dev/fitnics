@@ -24,7 +24,11 @@ const UpdateDietProfile = () => {
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        const response = await fetch("/api/user/status");
+        const response = await fetch("/api/user/status", 
+          {headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+            }}
+        );
         const data = await response.json();
 
         setHeight(data.height);
