@@ -1,5 +1,4 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Form, Button, Row, Col } from "react-bootstrap";
 import { BsLock } from "react-icons/bs";
@@ -33,79 +32,129 @@ const Register = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      toast.error("Password do not match");
+      toast.error("Passwords do not match");
     } else {
       try {
         const res = await register({ name, email, password }).unwrap();
         dispatch(setCredentials({ ...res }));
         navigate("/");
-        toast.success("Register Successfully!");
+        toast.success("Registered Successfully!");
       } catch (err) {
-        toast.error(err.data.message || err.error);
+        toast.error(err?.data?.message || err.error);
       }
     }
   };
 
   return (
-    <div className=" py-5">
-      <FormContainer className="d-flex justify-content-center">
-        <h1>Register Account</h1>
-        <Form onSubmit={submitHandler}>
-          <Form.Group className="my-2" controlId="name">
-            <Form.Label>Name</Form.Label>
-            <Form.Control
-              type="name"
-              placeholder="Enter Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            ></Form.Control>
-          </Form.Group>
+      <div
+          style={{
+            minHeight: "100vh",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+          }}
+      >
+        <FormContainer style={{ maxWidth: "400px", margin: "auto" }}>
+          <h1 className="text-center mb-4" style={{ color: "#1dda1d" }}>
+            Register Account
+          </h1>
+          <Form onSubmit={submitHandler}>
+            <Form.Group className="mb-3" controlId="name">
+              <Form.Label>Name</Form.Label>
+              <Form.Control
+                  type="text"
+                  placeholder="Enter your name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  style={{
+                    padding: "10px",
+                    fontSize: "16px",
+                    borderRadius: "5px",
+                    border: "1px solid #ddd",
+                  }}
+              />
+            </Form.Group>
 
-          <Form.Group controlId="formEmail">
-            <Form.Label>Email address</Form.Label>
-            <Form.Control
-              type="email"
-              placeholder="Enter Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </Form.Group>
+            <Form.Group className="mb-3" controlId="formEmail">
+              <Form.Label>Email Address</Form.Label>
+              <Form.Control
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  style={{
+                    padding: "10px",
+                    fontSize: "16px",
+                    borderRadius: "5px",
+                    border: "1px solid #ddd",
+                  }}
+              />
+            </Form.Group>
 
-          <Form.Group controlId="formPassword" className=" py-2">
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              type="password"
-              placeholder="Enter Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </Form.Group>
+            <Form.Group className="mb-3" controlId="formPassword">
+              <Form.Label>Password</Form.Label>
+              <Form.Control
+                  type="password"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  style={{
+                    padding: "10px",
+                    fontSize: "16px",
+                    borderRadius: "5px",
+                    border: "1px solid #ddd",
+                  }}
+              />
+            </Form.Group>
 
-          <Form.Group controlId="confirmPassword" className="mb-2">
-            <Form.Label>Confirm Password</Form.Label>
-            <Form.Control
-              type="password"
-              placeholder="Enter Confirm Password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            ></Form.Control>
-          </Form.Group>
+            <Form.Group className="mb-4" controlId="confirmPassword">
+              <Form.Label>Confirm Password</Form.Label>
+              <Form.Control
+                  type="password"
+                  placeholder="Confirm your password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  style={{
+                    padding: "10px",
+                    fontSize: "16px",
+                    borderRadius: "5px",
+                    border: "1px solid #ddd",
+                  }}
+              />
+            </Form.Group>
 
-          {isLoading && <Loader />}
+            {isLoading && <Loader />}
 
-          <Button variant="primary" type="submit">
-            <BsLock /> Sign Up
-          </Button>
+            <Button
+                variant="success"
+                type="submit"
+                style={{
+                  width: "100%",
+                  padding: "10px",
+                  fontSize: "16px",
+                  fontWeight: "600",
+                  borderRadius: "5px",
+                  backgroundColor: "#1dda1d",
+                  border: "none",
+                }}
+                onMouseEnter={(e) => (e.target.style.backgroundColor = "#16b916")}
+                onMouseLeave={(e) => (e.target.style.backgroundColor = "#1dda1d")}
+            >
+              <BsLock /> Sign Up
+            </Button>
 
-          <Row className="py-3">
-            <Col>
-              Already Have An Account? <Link to="/pages/login">Login</Link>
-            </Col>
-          </Row>
-        </Form>
-      </FormContainer>
-      <Footer />
-    </div>
+            <Row className="py-3 text-center">
+              <Col>
+                Already have an account?{" "}
+                <Link to="/pages/login" style={{ color: "#1dda1d" }}>
+                  Login
+                </Link>
+              </Col>
+            </Row>
+          </Form>
+        </FormContainer>
+        <Footer />
+      </div>
   );
 };
 

@@ -3,43 +3,37 @@ import { ListGroup } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
 
 const ProfileSidebar = () => {
-  const location = useLocation();
+    const location = useLocation();
 
-  return (
-    <ListGroup>
-      <ListGroup.Item
-        as={Link}
-        to="/pages/profile/update"
-        active={location.pathname === "/pages/profile/update"}
-      >
-        Update Profile
-      </ListGroup.Item>
+    const isActive = (path) => location.pathname === path;
 
-      <ListGroup.Item
-        as={Link}
-        to="/pages/profile/diet"
-        active={location.pathname === "/pages/profile/diet"}
-      >
-        Update Diet Profile
-      </ListGroup.Item>
-
-      <ListGroup.Item
-        as={Link}
-        to="/pages/profile/meal-plan"
-        active={location.pathname === "/pages/profile/meal-plan"}
-      >
-        Meal Plan
-      </ListGroup.Item>
-
-      <ListGroup.Item
-        as={Link}
-        to="/pages/profile/water-intake"
-        active={location.pathname === "/pages/profile/water-intake"}
-      >
-        Water Intake
-      </ListGroup.Item>
-    </ListGroup>
-  );
+    return (
+        <ListGroup>
+            {[
+                { path: "/pages/profile/update", label: "Update Profile" },
+                { path: "/pages/profile/diet", label: "Update Diet Profile" },
+                { path: "/pages/profile/meal-plan", label: "Meal Plan" },
+                { path: "/pages/profile/water-intake", label: "Water Intake" },
+            ].map(({ path, label }) => (
+                <ListGroup.Item
+                    as={Link}
+                    to={path}
+                    key={path}
+                    active={false} // Prevent default active styling
+                    style={{
+                        color: isActive(path) ? "#1dda1d" : "#333",
+                        fontWeight: isActive(path) ? "bold" : "normal",
+                        textDecoration: "none",
+                        cursor: "pointer",
+                        backgroundColor: isActive(path) ? "#f0fdf4" : "transparent", // Light green background for active
+                        border: "none",
+                    }}
+                >
+                    {label}
+                </ListGroup.Item>
+            ))}
+        </ListGroup>
+    );
 };
 
 export default ProfileSidebar;

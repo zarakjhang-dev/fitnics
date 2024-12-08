@@ -6,16 +6,17 @@ import Loader from "./Loader";
 
 const UpdateDietProfile = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [height, setHeight] = useState("");
-  const [weight, setWeight] = useState("");
-  const [goalWeight, setGoalWeight] = useState("");
-  const [age, setAge] = useState("");
-  const [gender, setGender] = useState("");
-  const [activityLevel, setActivityLevel] = useState("");
-  const [goal, setGoal] = useState("");
+  const [profileData, setProfileData] = useState({
+    height: "",
+    weight: "",
+    goalWeight: "",
+    age: "",
+    gender: "",
+    activityLevel: "",
+    goal: "",
+  });
 
   const [updateStatus] = useUpdateStatusMutation();
-
   const [calories, setCalories] = useState(0);
   const [protein, setProtein] = useState(0);
   const [fat, setFat] = useState(0);
@@ -24,42 +25,34 @@ const UpdateDietProfile = () => {
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        const response = await fetch("/api/user/status", 
-          {headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-            }}
-        );
+        const response = await fetch("/api/user/status", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
         const data = await response.json();
 
-        setHeight(data.height);
-        setWeight(data.weight);
-        setGoalWeight(data.goalWeight);
-        setAge(data.age);
-        setGender(data.gender);
-        setActivityLevel(data.activityLevel);
-        setGoal(data.goal);
+        setProfileData({
+          height: data.height,
+          weight: data.weight,
+          goalWeight: data.goalWeight,
+          age: data.age,
+          gender: data.gender,
+          activityLevel: data.activityLevel,
+          goal: data.goal,
+        });
 
-        const profileData = JSON.stringify(data); // Save the retrieved profile data to local storage
-        localStorage.setItem("profileData", profileData);
-
+        localStorage.setItem("profileData", JSON.stringify(data));
         setIsLoading(false);
       } catch (err) {
         toast.error("Failed to fetch profile data.");
-        toast.error(err?.data?.message || err.error);
         setIsLoading(false);
       }
     };
 
-    const profileData = localStorage.getItem("profileData");
-    if (profileData) {
-      const parsedData = JSON.parse(profileData);
-      setHeight(parsedData.height);
-      setWeight(parsedData.weight);
-      setGoalWeight(parsedData.goalWeight);
-      setAge(parsedData.age);
-      setGender(parsedData.gender);
-      setActivityLevel(parsedData.activityLevel);
-      setGoal(parsedData.goal);
+    const storedData = localStorage.getItem("profileData");
+    if (storedData) {
+      setProfileData(JSON.parse(storedData));
       setIsLoading(false);
     } else {
       fetchProfileData();
@@ -67,6 +60,7 @@ const UpdateDietProfile = () => {
   }, []);
 
   useEffect(() => {
+    const { weight, activityLevel, goal } = profileData;
     if (weight && activityLevel && goal) {
       const activityMultiplier = {
         sedentary: 1.4,
@@ -78,172 +72,166 @@ const UpdateDietProfile = () => {
       let calculatedCalories = weight * 22 * activityMultiplier;
       let calculatedProtein = weight * 2.2;
 
-      switch (goal) {
-        case "Cutting":
-          calculatedCalories -= 500;
-          break;
-        case "Bulking":
-          calculatedCalories += 500;
-          break;
-        default:
-          break;
-      }
+      if (goal === "Cutting") calculatedCalories -= 500;
+      if (goal === "Bulking") calculatedCalories += 500;
 
-      let calculatedFat = (calculatedCalories * 0.25) / 9; // Convert to grams
-      let calculatedCarbs =
-        (calculatedCalories - (calculatedProtein * 4 + calculatedFat * 9)) / 4; // Convert to grams
+      const calculatedFat = (calculatedCalories * 0.25) / 9;
+      const calculatedCarbs =
+          (calculatedCalories - (calculatedProtein * 4 + calculatedFat * 9)) / 4;
 
       setCalories(calculatedCalories);
       setProtein(calculatedProtein);
       setFat(calculatedFat);
       setCarbs(calculatedCarbs);
     }
-  }, [weight, activityLevel, goal]);
+  }, [profileData]);
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setProfileData((prev) => ({ ...prev, [id]: value }));
+  };
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    if (
-      height &&
-      weight &&
-      goalWeight &&
-      age &&
-      gender &&
-      activityLevel &&
-      goal
-    ) {
-      try {
-        const updatedProfile = {
-          height,
-          weight,
-          goalWeight,
-          age,
-          gender,
-          activityLevel,
-          goal,
-        };
+    const {
+      height,
+      weight,
+      goalWeight,
+      age,
+      gender,
+      activityLevel,
+      goal,
+    } = profileData;
 
-        const response = await updateStatus(updatedProfile).unwrap();
-
-        toast.success("Diet Profile Updated!");
-
-        // Save the updated profile data to local storage
-        const profileData = JSON.stringify(updatedProfile);
-        localStorage.setItem("profileData", profileData);
-      } catch (err) {
-        toast.error(err?.data?.message || err.error);
-      }
-    } else {
+    if (!height || !weight || !goalWeight || !age || !gender || !activityLevel || !goal) {
       toast.error("Please fill in all the required fields.");
+      return;
+    }
+
+    try {
+      const response = await updateStatus(profileData).unwrap();
+      toast.success("Diet Profile Updated!");
+      localStorage.setItem("profileData", JSON.stringify(profileData));
+    } catch (err) {
+      toast.error(err?.data?.message || err.error);
     }
   };
 
   return (
-    <>
-      <Form onSubmit={submitHandler}>
-        <Form.Group className="my-2" controlId="height">
-          <Form.Label>Height (CM)</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="Enter height"
-            value={height}
-            onChange={(e) => setHeight(e.target.value)}
-          ></Form.Control>
-        </Form.Group>
+      <>
+        <Form
+            onSubmit={submitHandler}
+            style={{
+              maxWidth: "600px",
+              margin: "auto",
+              background: "#f8f9fa",
+              padding: "20px",
+              borderRadius: "10px",
+              boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+            }}
+        >
+          <h2 className="text-center mb-4" style={{ color: "#1dda1d" }}>
+            Update Diet Profile
+          </h2>
 
-        <Form.Group className="my-2" controlId="weight">
-          <Form.Label>Weight (KG)</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="Enter weight"
-            value={weight}
-            onChange={(e) => setWeight(e.target.value)}
-          ></Form.Control>
-        </Form.Group>
+          {["height", "weight", "goalWeight", "age"].map((field) => (
+              <Form.Group key={field} className="mb-3" controlId={field}>
+                <Form.Label>
+                  {field.charAt(0).toUpperCase() + field.slice(1)} {field === "height" ? "(CM)" : field === "weight" || field === "goalWeight" ? "(KG)" : ""}
+                </Form.Label>
+                <Form.Control
+                    type="text"
+                    placeholder={`Enter ${field}`}
+                    value={profileData[field]}
+                    onChange={handleChange}
+                    style={{
+                      padding: "10px",
+                      fontSize: "16px",
+                      borderRadius: "5px",
+                      border: "1px solid #ddd",
+                    }}
+                />
+              </Form.Group>
+          ))}
 
-        <Form.Group className="my-2" controlId="goalWeight">
-          <Form.Label>Goal Weight (KG)</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="Enter goal weight"
-            value={goalWeight}
-            onChange={(e) => setGoalWeight(e.target.value)}
-          ></Form.Control>
-        </Form.Group>
+          {["gender", "activityLevel", "goal"].map((field) => (
+              <Form.Group key={field} className="mb-3" controlId={field}>
+                <Form.Label>
+                  {field.charAt(0).toUpperCase() + field.slice(1)}
+                </Form.Label>
+                <Form.Control
+                    as="select"
+                    value={profileData[field]}
+                    onChange={handleChange}
+                    style={{
+                      padding: "10px",
+                      fontSize: "16px",
+                      borderRadius: "5px",
+                      border: "1px solid #ddd",
+                    }}
+                >
+                  <option value="">Select {field}</option>
+                  {field === "gender" && (
+                      <>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                      </>
+                  )}
+                  {field === "activityLevel" && (
+                      <>
+                        <option value="sedentary">Sedentary</option>
+                        <option value="lightlyActive">Lightly Active</option>
+                        <option value="active">Active</option>
+                        <option value="veryActive">Very Active</option>
+                      </>
+                  )}
+                  {field === "goal" && (
+                      <>
+                        <option value="Maintenance">Maintenance</option>
+                        <option value="Cutting">Cutting</option>
+                        <option value="Bulking">Bulking</option>
+                      </>
+                  )}
+                </Form.Control>
+              </Form.Group>
+          ))}
 
-        <Form.Group className="my-2" controlId="age">
-          <Form.Label>Age</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="Enter age"
-            value={age}
-            onChange={(e) => setAge(e.target.value)}
-          ></Form.Control>
-        </Form.Group>
+          {isLoading && <Loader />}
 
-        <Form.Group className="my-2" controlId="gender">
-          <Form.Label>Gender</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="Enter gender"
-            value={gender}
-            onChange={(e) => setGender(e.target.value)}
-          ></Form.Control>
-        </Form.Group>
-
-        <Form.Group className="my-2" controlId="activityLevel">
-          <Form.Label>Activity Level</Form.Label>
-          <Form.Control
-            as="select"
-            value={activityLevel}
-            onChange={(e) => setActivityLevel(e.target.value)}
+          <Button type="submit" variant="success" className="w-100 mt-3"
+                  style={{
+                    width: "100%",
+                    padding: "10px",
+                    fontSize: "16px",
+                    fontWeight: "600",
+                    borderRadius: "5px",
+                    backgroundColor: "#1dda1d",
+                    border: "none",
+                  }}
           >
-            <option value="">Select activity level</option>
-            <option value="sedentary">SEDENTARY</option>
-            <option value="lightlyActive">LIGHTLY ACTIVE</option>
-            <option value="active">ACTIVE</option>
-            <option value="veryActive">VERY ACTIVE</option>
-          </Form.Control>
-        </Form.Group>
+            Update Diet Profile
+          </Button>
+        </Form>
 
-        <Form.Group className="my-2" controlId="goal">
-          <Form.Label>Goal</Form.Label>
-          <Form.Control
-            as="select"
-            value={goal}
-            onChange={(e) => setGoal(e.target.value)}
-          >
-            <option value="">Select goal</option>
-            <option value="Maintenance">Maintenance</option>
-            <option value="Cutting">Cutting</option>
-            <option value="Bulking">Bulking</option>
-          </Form.Control>
-        </Form.Group>
-
-        {isLoading && <Loader />}
-
-        <Button type="submit" variant="primary" className="mt-3">
-          Update Diet Profile
-        </Button>
-      </Form>
-      <Table striped bordered hover className="mt-3">
-        <thead>
+        <Table striped bordered hover className="mt-4" style={{ maxWidth: "600px", margin: "auto" }}>
+          <thead>
           <tr>
             <th>Calories</th>
-            <th>Protein (Grams)</th>
-            <th>Fat (Grams)</th>
-            <th>Carbs (Grams)</th>
+            <th>Protein (g)</th>
+            <th>Fat (g)</th>
+            <th>Carbs (g)</th>
           </tr>
-        </thead>
-        <tbody>
+          </thead>
+          <tbody>
           <tr>
             <td>{Math.round(calories)}</td>
-            <td>{Math.round(protein)} Grams of Protein</td>
-            <td>{Math.round(fat)} Grams of Fats</td>
-            <td>{Math.round(carbs)} Grams of Carbs</td>
+            <td>{Math.round(protein)}</td>
+            <td>{Math.round(fat)}</td>
+            <td>{Math.round(carbs)}</td>
           </tr>
-        </tbody>
-      </Table>
-    </>
+          </tbody>
+        </Table>
+      </>
   );
 };
 
