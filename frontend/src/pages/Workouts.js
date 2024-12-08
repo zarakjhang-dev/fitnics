@@ -5,21 +5,24 @@ import ExercisePage from "../components/ExerciseDB";
 import Footer from "../components/Footer";
 
 const Workouts = () => {
-  return (
-    <>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "80vh",
-        }}
-      >
-        <ExercisePage />
-      </Box>
-      <Footer />
-    </>
-  );
+    return (
+        <>
+            <Box
+                sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    flexDirection: "column", // Supports stacking if needed
+                    minHeight: "80vh", // Ensures the box adapts to content
+                    padding: { xs: "2rem", md: "0" }, // Adds padding for smaller screens
+                    backgroundColor: "#f8f9fa", // Light background for consistency
+                }}
+            >
+                <ExercisePage />
+            </Box>
+            <Footer />
+        </>
+    );
 };
 
 export default Workouts;
